@@ -11,10 +11,12 @@ private:
 	int rightChild(int);
 	void siftDown(int);
 	void siftUp(int);
+	void deleteMax();
 
 public:
 	void push(T);
-	T getMax() {};
+	T popMax();
+	int size() { return heap.size(); };
 	
 	void print();
 };
@@ -88,13 +90,71 @@ void MyHeap<T>::push(T el) {
 	siftUp(heap.size() - 1);
 }
 
+template <typename T>
+void MyHeap<T>::deleteMax() {
+	if (heap.size() > 1) {
+		T elem = heap.back();
+		heap.pop_back();
+		heap[0] = elem;
+		siftDown(0);
+	}
+	else if (heap.size() == 1) {
+		heap.pop_back();
+	}
+}
+
+template <typename T>
+T MyHeap<T>::popMax() {
+	if (heap.size() > 0) {
+		T maxEl = heap[0];
+		deleteMax();
+		return maxEl;
+	}
+}
+
+
+int countSets(MyHeap<int> &basket, int K) {
+	if (K <= 0)
+		return -1;
+	int sets = 0;
+	while (basket.size() > 0) {
+		int weight = 0;
+		vector<int> hand;
+		while (weight <= K && basket.size() > 0) {
+			int elem = basket.popMax();
+			weight += elem;
+			if (weight > K) {
+				basket.push(elem);
+			}
+			else {
+				int newEl = elem / 2;
+				if (newEl > 0)
+					hand.push_back(newEl);
+			}
+		}
+
+		for (vector<int>::iterator it = hand.begin(); it != hand.end(); it++) {
+			basket.push(*it);
+		}
+		sets++;
+	}
+	return sets;
+}
 
 int main() {
-	MyHeap<int> h;
-	int n;
-	while (cin >> n) {
-		h.push(n);
+	MyHeap<int> basket;
+	int K = 0;
+	int elCount = 0;
+	cin >> elCount;
+	for(int i = 0; i < elCount; i++){
+		int n;
+		cin >> n;
+		basket.push(n);
 	}
-	h.print();
+	cin >> K;
+	basket.print();
+	
+	int sets = countSets(basket, K);
+	cout << sets << endl;
 	return 0;
 }
