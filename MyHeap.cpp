@@ -14,6 +14,8 @@ private:
 	void deleteMax();
 
 public:
+	MyHeap() {};
+	MyHeap(vector<T>&);
 	void push(T);
 	T popMax();
 	int size() { return heap.size(); };
@@ -27,6 +29,14 @@ void MyHeap<T>::print() {
 		cout << *it << ", ";
 	}
 	cout << endl;
+}
+
+template <typename T>
+MyHeap<T>::MyHeap(vector<T> &vect) {
+	heap = vect;
+	for (int i = vect.size() / 2 - 1; i >= 0; --i) {
+		siftDown(i);
+	}
 }
 
 template <typename T>
